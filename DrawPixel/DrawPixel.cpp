@@ -1,17 +1,20 @@
 #include "pch.h"
+#include "Matrix.h"
+#include "Text.h"
 #include <SDL.h>
 #include <stdio.h>
 #include <string>
 #include <cmath>
-#include "Matrix.h"
 #include <iostream>
+#include <SDL_ttf.h>
 
 const int SCREEN_WIDTH = 1920;
 const int SCREEN_HEIGHT = 1080;
 bool init();
 void close();
-SDL_Window* gWindow = NULL;
-SDL_Renderer* gRenderer = NULL;
+SDL_Window *gWindow = NULL;
+SDL_Renderer *gRenderer = NULL;
+SDL_Texture *texture = NULL;
 
 bool init() {
 	bool success = true;
@@ -45,12 +48,14 @@ bool init() {
 void close() {
 	SDL_DestroyRenderer(gRenderer);
 	SDL_DestroyWindow(gWindow);
+	SDL_DestroyTexture(texture);;
 	gWindow = NULL;
 	gRenderer = NULL;
+	TTF_Quit();
 	SDL_Quit();
 }
 
-//------------------------------Mis funciones-------------------------------------------
+//-------------------------------------------------------------------------
 //Draw a single pixel
 void DrawPixelF(int x, int y) {
 	Vector2 v(x, y);
@@ -156,7 +161,7 @@ void BezierCurve(int xPoints[4], int yPoints[4]) {
 }
 
 //Draw a circle
-void DrawCircle(int r, int xc, int yc) {
+void DrawCircle(int xc, int yc, int r) {
 	Vector2 centroV(int xc, int yc);
 	int x = 0;
 	int y = 0;
@@ -186,9 +191,72 @@ void DrawCircle(int r, int xc, int yc) {
 		DrawPixelF(-y + xc, -x + yc);
 	}
 }
+
+void DrawMenu() {
+	SDL_Rect rect;
+	rect.x = 0;
+	rect.y = 0;
+	rect.w = SCREEN_WIDTH;
+	rect.h = 50;
+	//SDL_RenderDrawRect(gRenderer, &rect);
+	SDL_RenderFillRect(gRenderer, &rect);
+	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	SDL_RenderPresent(gRenderer);
+}
+
+void DrawAxis() {
+	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
+	for (int y = 0; y < SCREEN_HEIGHT; y += 4) {
+		SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, y);
+		for (int i = 0; i < SCREEN_WIDTH; i += 20) {
+			SDL_RenderDrawPoint(gRenderer, i, y);
+		}
+	}
+	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
+	for (int x = 0; x < SCREEN_WIDTH; x += 4) {
+		SDL_RenderDrawPoint(gRenderer, x, SCREEN_HEIGHT / 2);
+		for (int i = 0; i < SCREEN_WIDTH; i += 20) {
+			SDL_RenderDrawPoint(gRenderer, x, i);
+		}
+	}
+	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
+	for (int x = 0; x < SCREEN_HEIGHT; x += 1) {
+		SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, x);
+	}
+	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
+	for (int x = 0; x < SCREEN_WIDTH; x += 1) {
+		SDL_RenderDrawPoint(gRenderer, x, SCREEN_HEIGHT / 2);
+	}
+	SDL_RenderPresent(gRenderer);
+}
+
 //-------------------------------------------------------------------------------------
 
 int main(int argc, char* args[]) {
+	bool leftMouseButtonDown = false;
+	texture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, 1920, 1080);
+	Uint32* pixels = new Uint32[1920 * 1080];
+	memset(pixels, 255, 1920 * 1080 * sizeof(Uint32));
+
+	TTF_Init();
+	SDL_Color color = { 0, 0, 0 };
+	Text t(gRenderer, "arial.ttf", 72 , "HOLAAAAAAAAAAAAAAAAAAAAA", color);
+	t.Display(960, 240, gRenderer);
+
+	int mouseX;
+	int mouseY;
+	int mouseX2;
+	int mouseY2;
+	int mouseX3;
+	int mouseY3;
+	int mouseX4;
+	int mouseY4;
+	int x[4];
+	int y[4];
+	int modeSelector = 0;
+	int counter = -1;
+
 	if (!init()) {
 		printf("Failed to initialize!\n");
 	}
@@ -202,153 +270,76 @@ int main(int argc, char* args[]) {
 					quit = true;
 				}
 			}
-			SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
-			for (int y = 0; y < SCREEN_HEIGHT; y += 4) {
-				SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, y);
-				for (int i = 0; i < SCREEN_WIDTH; i += 20) {
-					SDL_RenderDrawPoint(gRenderer, i, y);
-				}
-			}
-			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
-			for (int x = 0; x < SCREEN_WIDTH; x += 4) {
-				SDL_RenderDrawPoint(gRenderer, x, SCREEN_HEIGHT / 2);
-				for (int i = 0; i < SCREEN_WIDTH; i += 20) {
-					SDL_RenderDrawPoint(gRenderer, x, i);
-				}
-			}
-			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
-			for (int x = 0; x < SCREEN_HEIGHT; x += 1) {
-				SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, x);
-
-			}
-			SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
-			for (int x = 0; x < SCREEN_WIDTH; x += 1) {
-				SDL_RenderDrawPoint(gRenderer, x, SCREEN_HEIGHT / 2);
-			}
-			SDL_RenderPresent(gRenderer);
-			//---------------------------------------MENU---------------------------------------
-			std::cout << "----------------------------" << std::endl;
-			std::cout << "Welcome, what do you want to draw? " << std::endl;
-			std::cout << "1) Draw a pixel" << std::endl;
-			std::cout << "2) Draw a DDA line" << std::endl;
-			std::cout << "3) Draw a bresenham line" << std::endl;
-			std::cout << "4) Draw a bresenham circle" << std::endl;
-			std::cout << "5) Draw a Bezier curve" << std::endl;
-			std::cout << "----------------------------" << std::endl;
-			short selector;
-			std::cin >> selector;
-			switch (selector) {
-				// Draw a pixel
-				case 1:
-					int x0P, y0P;
-					std::cout << "Point: " << std::endl;
-					std::cout << "x: ";
-					std::cin >> x0P;
-					std::cout << "y: ";
-					std::cin >> y0P;
-					DrawPixelF(x0P, y0P);
-					break;
-
-				//Draw a line
-				/*case 2:
-					int x0L, y0L, x1L, y1L;
-					std::cout << "First point: " << std::endl;
-					std::cout << "x: ";
-					std::cin >> x0L;
-					std::cout << "y: ";
-					std::cin >> y0L;
-					std::cout << "Second point: " << std::endl;
-					std::cout << "x: ";
-					std::cin >> x1L;
-					std::cout << "y: ";
-					std::cin >> y1L;
-					DrawLine(x0L, y0L, x1L, y1L);
-					break;*/
-
-				//Draw DDA Line
-				case 2:
-					int x0DDA, y0DDA, x1DDA, y1DDA;
-					std::cout << "First point: " << std::endl;
-					std::cout << "x: ";
-					std::cin >> x0DDA;
-					std::cout << "y: ";
-					std::cin >> y0DDA;
-					std::cout << "Second point: " << std::endl;
-					std::cout << "x: ";
-					std::cin >> x1DDA;
-					std::cout << "y: ";
-					std::cin >> y1DDA;
-					DDALine(x0DDA, y0DDA, x1DDA, y1DDA);
-					break;
-
-				//Draw Bresenham line
-				case 3:
-					int x0BL, y0BL, x1BL, y1BL;
-					std::cout << "First point: " << std::endl;
-					std::cout << "x: ";
-					std::cin >> x0BL;
-					std::cout << "y: ";
-					std::cin >> y0BL;
-					std::cout << "Second point: " << std::endl;
-					std::cout << "x: ";
-					std::cin >> x1BL;
-					std::cout << "y: ";
-					std::cin >> y1BL;
-					BresenhamL(x0BL, y0BL, x1BL, y1BL, 1, 1);
-					break;
-
-				//Draw bresenham circle
-				case 4:
-					int x0C, y0C, rC;
-					std::cout << "Point of origin: " << std::endl;
-					std::cout << "x: ";
-					std::cin >> x0C;
-					std::cout << "y: ";
-					std::cin >> y0C;
-					std::cout << "Radius: " << std::endl;
-					std::cout << "r: ";
-					std::cin >> rC;
-					DrawCircle(rC, x0C, y0C);
-					break;
-
-						
-				//Draw Bezier curve
-				case 5:
-					int xPoints[4];
-					int yPoints[4];
-					std::cout << "Enter x and y: " << std::endl;
-					for (int i = 0; i < 4; i++) {
-						std::cout << "x: ";
-						std::cin >> xPoints[i];
-						std::cout << "y: ";
-						std::cin >> yPoints[i];
-						std::cout << std::endl;
+			DrawMenu();
+			DrawAxis();
+			SDL_UpdateTexture(texture, NULL, pixels, 1920 * sizeof(Uint32));
+			SDL_WaitEvent(&e);
+			switch (e.type) {
+			case SDL_QUIT:
+				quit = true;
+				break;
+			case SDL_MOUSEBUTTONUP:
+				if (e.button.button == SDL_BUTTON_LEFT)
+					leftMouseButtonDown = false;
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				if (e.button.button == SDL_BUTTON_LEFT)
+					leftMouseButtonDown = true;
+			case SDL_MOUSEMOTION:
+				if (leftMouseButtonDown) {
+					counter = counter + 1;
+					if (counter == 0) {
+						mouseX = e.motion.x - (SCREEN_WIDTH / 2);
+						mouseY = -e.motion.y + (SCREEN_HEIGHT / 2);
+						x[0] = mouseX;
+						y[0] = mouseY;
 					}
-					BezierCurve(xPoints, yPoints);
-					break;
+					if (counter == 1) {
+						mouseX2 = e.motion.x - (SCREEN_WIDTH / 2);
+						mouseY2 = -e.motion.y + (SCREEN_HEIGHT / 2);
+						x[1] = mouseX2;
+						y[1] = mouseY2;
+					}
+					if (counter == 2) {
+						mouseX3 = e.motion.x - (SCREEN_WIDTH / 2);
+						mouseY3 = -e.motion.y + (SCREEN_HEIGHT / 2);
+						x[2] = mouseX3;
+						y[2] = mouseY3;
+					}
+					if (counter == 3) {
+						mouseX4 = e.motion.x - (SCREEN_WIDTH / 2);
+						mouseY4 = -e.motion.y + (SCREEN_HEIGHT / 2);
+						x[3] = mouseX2;
+						y[3] = mouseY2;
+						counter = -1;
+						modeSelector = 3;
+					}
 
-				default:
-					break;
+					switch (modeSelector) {
+						case 1:
+							DDALine(mouseX, mouseY, mouseX2, mouseY2);
+							modeSelector = 0;
+							break;
+
+						case 2:
+							BresenhamL(mouseX, mouseY, mouseX2, mouseY2, 1, 1);
+							modeSelector = 0;
+							break;
+
+						case 3:
+							BezierCurve(x, y);
+							modeSelector = 0;
+							break;
+
+						case 4:
+							DrawCircle(mouseX, mouseY, mouseX2);
+							modeSelector = 0;
+							break;
+					}
+				}
+				break;
 			}
-			//-------------------------------------------------------------------------------------
-
-			Matrix matrix1(2, 2);
-			matrix1(0, 0) = 1;
-			matrix1(0, 1) = 2;
-			matrix1(1, 0) = 3;
-			matrix1(1, 1) = 4;
-			Matrix matrix2(2, 2);
-			matrix2(0, 0) = 2;
-			matrix2(0, 1) = 2;
-			matrix2(1, 0) = 2;
-			matrix2(1, 1) = 2;
-			std::cout << "Matrix result: " << std::endl;
-			std::cout << "(0,0): " << std::endl;
-			std::cout << "(0,1): " << std::endl;
-			std::cout << "(1,0): " << std::endl;
-			std::cout << "(1,1): " << std::endl;
-			
+			SDL_RenderCopy(gRenderer, texture, NULL, NULL);
 			SDL_RenderPresent(gRenderer);
 		}
 	}

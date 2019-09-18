@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Vector2.h"
 
-
 Vector2::Vector2(int x, int y)
 {
 	this->x = x;
@@ -80,11 +79,23 @@ float Vector2:: operator* (Vector2 param)  {
 	return temp;
 }
 
+
 Vector2 Vector2::operator*(int x) {
 	Vector2 temp;
 	temp.x = x * this->x;
 	temp.y = y * this->y;
 	return temp;
+}
+
+void Vector2::rotation(int angulo) {
+	int x2 = this->x;
+	this->x = (this->x * (cos(angulo * 0.0174533))) + (this->y * (-sin(angulo * 0.0174533)));
+	this->y = (x2 * (sin(angulo * 0.0174533))) + (this->y * (cos(angulo * 0.0174533)));
+}
+
+void Vector2::scaling(int sizeX, int sizeY) {
+	this->x = (this->x * sizeX);
+	this->y = (this->y * sizeY);
 }
 
 //Vector2 Vector2::operator= (Vector2 param) 

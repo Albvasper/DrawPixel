@@ -115,36 +115,25 @@ void DDALine(int x1, int y1, int x2, int y2) {
 }
 
 //Draw Bresenham Line
-void BresenhamL(int x, int y, int dx, int dy, int incrX, int incrY) {
-	int i = 0;
-	int p = (2 * dy) - dx;
-	if (dx > dy) {
-		while (i < dx) {
+void BresenhamL(int x0, int y0, int x1, int y1, int incrX, int incrY) {
+	int dx, dy, p, x, y;
+
+	dx = x1 - x0;
+	dy = y1 - y0;
+	x = x0;
+	y = y0;
+	p = 2 * dy - dx;
+	while (x < x1) {
+		if (p >= 0) {
 			DrawPixelF(x, y);
-			x += incrX;
-			if (p < 0) {
-				p = p + (2 * dy);
-			}
-			else {
-				y += incrY;
-				p = p + (2 * (dy - dx));
-			}
-			i++;
+			y = y + 1;
+			p = p + 2 * dy - 2 * dx;
 		}
-	}
-	else {
-		while (i < dy) {
+		else {
 			DrawPixelF(x, y);
-			y += incrY;
-			if (p < 0) {
-				p = p + (2 * dx);
-			}
-			else {
-				x += incrX;
-				p = p + (2 * (dx - dy));
-			}
-			i++;
+			p = p + 2 * dy;
 		}
+		x = x + 1;
 	}
 }
 
@@ -169,7 +158,7 @@ void DrawCircle(int xc, int yc, int r) {
 	int p;
 	x = 0;
 	y = r;
-	p = 1 - r;
+	p = (5 / 4) - r;
 	for (int i = 0; x <= y; i++) {
 		if (p <= 0) {
 			x = x + 1;
@@ -270,7 +259,7 @@ void DrawMenu() {
 	Text b4(gRenderer, "arial.ttf", 25, "Bezier", whiteC);
 	b4.Display(775, 14, gRenderer);
 
-	Text b5(gRenderer, "arial.ttf", 25, "Cricle", whiteC);
+	Text b5(gRenderer, "arial.ttf", 25, "Circle", whiteC);
 	b5.Display(900, 14, gRenderer);
 
 	Text b6(gRenderer, "arial.ttf", 25, "X", whiteC);
@@ -351,10 +340,11 @@ int main(int argc, char* args[]) {
 						leftMouseButtonDown = false;
 					break;
 				case SDL_MOUSEBUTTONDOWN:
-					if (e.button.button == SDL_BUTTON_LEFT)
+					if (e.button.button == SDL_BUTTON_LEFT) {
 						leftMouseButtonDown = true;
-				case SDL_MOUSEMOTION:
-					if (leftMouseButtonDown) {
+					}
+
+					if (leftMouseButtonDown == true) {
 						mouseX = e.motion.x;
 						mouseY = e.motion.y;
 						//Pixel Button
@@ -515,25 +505,30 @@ int main(int argc, char* args[]) {
 						}
 					}
 				break;
+
+				case SDL_MOUSEMOTION:
+					break;
 			}
 			DrawAxis();	
 			DrawMenu();
+			Matrix m(2, 2);
+			m.setRows(2);
+			m.setCols(2);
+			m(0, 0) = 1;
+			m(0, 1) = 2;
+			m(1, 0) = 3;
+			m(1, 1) = 4;
+			Matrix m1(2, 2);
+			m1.setRows(2);
+			m1.setCols(2);
+			m1(0, 0) = 4;
+			m1(0, 1) = 3;
+			m1(1, 0) = 2;
+			m1(1, 1) = 1;
+			m.plus(m, m1);
 			SDL_RenderCopy(gRenderer, texture, NULL, NULL);
 			SDL_RenderPresent(gRenderer);
 		}
-
-		Matrix m(2, 2);
-		m(0,0)  = 1;
-		m(0, 1) = 2;
-		m(1, 0) = 3;
-		m(1, 1) = 4;
-		Matrix m1(2, 2);
-		m(0, 0) = 4;
-		m(0, 1) = 3;
-		m(1, 0) = 2;
-		m(1, 1) = 1;
-		Matrix mr(2, 2);
-		m1.operator+(m);
 
 	}
 	close();

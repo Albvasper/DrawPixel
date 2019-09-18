@@ -1,4 +1,5 @@
 #pragma once
+#include <cmath>
 
 class Vector2 {	
 
@@ -20,6 +21,9 @@ class Vector2 {
 		Vector2 operator- (Vector2);
 		Vector2 operator* (int x);
 		float operator* (Vector2 param);
+		void rotation(int angulo);
+		void scaling(int sizeX, int sizeY);
+
 		//Vector2 operator= (Vector2);
 		~Vector2();
 };

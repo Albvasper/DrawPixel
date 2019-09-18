@@ -1,0 +1,20 @@
+﻿  DrawPixel.cpp
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(72): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(78): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(85): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(97): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(98): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(107): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(108): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(111): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(142): warning C4305: '+=': truncation from 'double' to 'float'
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(145): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\DrawPixel.cpp(154): warning C4930: 'Vector2 centerV(int,int)': prototyped function not called (was a variable definition intended?)
+  Matrix.cpp
+  Vector2.cpp
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\Vector2.cpp(79): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\Vector2.cpp(92): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\Vector2.cpp(93): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
+C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\DrawPixel\Matrix.cpp(62): warning C4172: returning address of local variable or temporary: transposeM
+  DrawPixel.vcxproj -> C:\Users\alber\Desktop\DrawPixel - AlbertoVasquez\Debug\DrawPixel.exe

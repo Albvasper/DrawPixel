@@ -193,6 +193,7 @@ void DrawCircle(int xc, int yc, int r) {
 }
 
 void DrawMenu() {
+	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
 	SDL_Rect rect;
 	rect.x = 0;
 	rect.y = 0;
@@ -201,11 +202,14 @@ void DrawMenu() {
 	//SDL_RenderDrawRect(gRenderer, &rect);
 	SDL_RenderFillRect(gRenderer, &rect);
 	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 255);
+	TTF_Init();
+	SDL_Color color = { 45, 211, 186 };
+	Text t(gRenderer, "arial.ttf", 50 , "Draw Pixel!", color);
+	t.Display(0, 0, gRenderer);
 	SDL_RenderPresent(gRenderer);
 }
 
 void DrawAxis() {
-	SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 	SDL_SetRenderDrawColor(gRenderer, 0x00, 0x00, 0x00, 0x00);
 	for (int y = 0; y < SCREEN_HEIGHT; y += 4) {
 		SDL_RenderDrawPoint(gRenderer, SCREEN_WIDTH / 2, y);
@@ -234,16 +238,6 @@ void DrawAxis() {
 //-------------------------------------------------------------------------------------
 
 int main(int argc, char* args[]) {
-	bool leftMouseButtonDown = false;
-	texture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, 1920, 1080);
-	Uint32* pixels = new Uint32[1920 * 1080];
-	memset(pixels, 255, 1920 * 1080 * sizeof(Uint32));
-
-	TTF_Init();
-	SDL_Color color = { 0, 0, 0 };
-	Text t(gRenderer, "arial.ttf", 72 , "HOLAAAAAAAAAAAAAAAAAAAAA", color);
-	t.Display(960, 240, gRenderer);
-
 	int mouseX;
 	int mouseY;
 	int mouseX2;
@@ -256,6 +250,10 @@ int main(int argc, char* args[]) {
 	int y[4];
 	int modeSelector = 0;
 	int counter = -1;
+	bool leftMouseButtonDown = false;
+	texture = SDL_CreateTexture(gRenderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STATIC, 1920, 1080);
+	Uint32* pixels = new Uint32[1920 * 1080];
+	memset(pixels, 255, 1920 * 1080 * sizeof(Uint32));
 
 	if (!init()) {
 		printf("Failed to initialize!\n");
@@ -275,68 +273,75 @@ int main(int argc, char* args[]) {
 			SDL_UpdateTexture(texture, NULL, pixels, 1920 * sizeof(Uint32));
 			SDL_WaitEvent(&e);
 			switch (e.type) {
-			case SDL_QUIT:
-				quit = true;
-				break;
-			case SDL_MOUSEBUTTONUP:
-				if (e.button.button == SDL_BUTTON_LEFT)
-					leftMouseButtonDown = false;
-				break;
-			case SDL_MOUSEBUTTONDOWN:
-				if (e.button.button == SDL_BUTTON_LEFT)
-					leftMouseButtonDown = true;
-			case SDL_MOUSEMOTION:
-				if (leftMouseButtonDown) {
-					counter = counter + 1;
-					if (counter == 0) {
-						mouseX = e.motion.x - (SCREEN_WIDTH / 2);
-						mouseY = -e.motion.y + (SCREEN_HEIGHT / 2);
-						x[0] = mouseX;
-						y[0] = mouseY;
-					}
-					if (counter == 1) {
-						mouseX2 = e.motion.x - (SCREEN_WIDTH / 2);
-						mouseY2 = -e.motion.y + (SCREEN_HEIGHT / 2);
-						x[1] = mouseX2;
-						y[1] = mouseY2;
-					}
-					if (counter == 2) {
-						mouseX3 = e.motion.x - (SCREEN_WIDTH / 2);
-						mouseY3 = -e.motion.y + (SCREEN_HEIGHT / 2);
-						x[2] = mouseX3;
-						y[2] = mouseY3;
-					}
-					if (counter == 3) {
-						mouseX4 = e.motion.x - (SCREEN_WIDTH / 2);
-						mouseY4 = -e.motion.y + (SCREEN_HEIGHT / 2);
-						x[3] = mouseX2;
-						y[3] = mouseY2;
-						counter = -1;
-						modeSelector = 3;
-					}
+				case SDL_QUIT:
+					quit = true;
+					break;
+				case SDL_MOUSEBUTTONUP:
+					if (e.button.button == SDL_BUTTON_LEFT)
+						leftMouseButtonDown = false;
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					if (e.button.button == SDL_BUTTON_LEFT)
+						leftMouseButtonDown = true;
+				case SDL_MOUSEMOTION:
+					if (leftMouseButtonDown) {
+						counter = counter + 1;
+						if (counter == 0) {
+							mouseX = e.motion.x - (SCREEN_WIDTH / 2);
+							mouseY = -e.motion.y + (SCREEN_HEIGHT / 2);
+							x[0] = mouseX;
+							y[0] = mouseY;
+							DrawPixelF(mouseX, mouseY);
+						}
 
-					switch (modeSelector) {
-						case 1:
-							DDALine(mouseX, mouseY, mouseX2, mouseY2);
-							modeSelector = 0;
-							break;
+						if (counter == 1) {
+							mouseX2 = e.motion.x - (SCREEN_WIDTH / 2);
+							mouseY2 = -e.motion.y + (SCREEN_HEIGHT / 2);
+							x[1] = mouseX2;
+							y[1] = mouseY2;
+							DrawPixelF(mouseX2, mouseY2);
+						}
 
-						case 2:
-							BresenhamL(mouseX, mouseY, mouseX2, mouseY2, 1, 1);
-							modeSelector = 0;
-							break;
+						if (counter == 2) {
+							mouseX3 = e.motion.x - (SCREEN_WIDTH / 2);
+							mouseY3 = -e.motion.y + (SCREEN_HEIGHT / 2);
+							x[2] = mouseX3;
+							y[2] = mouseY3;
+							DrawPixelF(mouseX3, mouseY3);
+						}
 
-						case 3:
-							BezierCurve(x, y);
-							modeSelector = 0;
-							break;
+						if (counter == 3) {
+							mouseX4 = e.motion.x - (SCREEN_WIDTH / 2);
+							mouseY4 = -e.motion.y + (SCREEN_HEIGHT / 2);
+							x[3] = mouseX2;
+							y[3] = mouseY2;
+							DrawPixelF(mouseX4, mouseY4);
+							counter = -1;
+							modeSelector = 3;
+						}
 
-						case 4:
-							DrawCircle(mouseX, mouseY, mouseX2);
-							modeSelector = 0;
-							break;
+						switch (modeSelector) {
+							case 1:
+								DDALine(mouseX, mouseY, mouseX2, mouseY2);
+								modeSelector = 0;
+								break;
+
+							case 2:
+								BresenhamL(mouseX, mouseY, mouseX2, mouseY2, 1, 1);
+								modeSelector = 0;
+								break;
+
+							case 3:
+								BezierCurve(x, y);
+								modeSelector = 0;
+								break;
+
+							case 4:
+								DrawCircle(mouseX, mouseY, mouseX2);
+								modeSelector = 0;
+								break;
+						}
 					}
-				}
 				break;
 			}
 			SDL_RenderCopy(gRenderer, texture, NULL, NULL);

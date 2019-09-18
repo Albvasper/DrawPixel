@@ -36,7 +36,7 @@ SDL_Texture* Text::LoadFont(SDL_Renderer* renderer, const std::string& font_path
 	}
 	auto text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
 	if (!text_texture) {
-		std::cerr << "Failed to create text texture\n" << SDL_GetError();
+		std::cerr << "Failed to create text texture\n";
 	}
 
 	TTF_CloseFont(font);
